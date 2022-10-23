@@ -111,6 +111,18 @@ boolean hm_try_find(hm* map, const char* key, hm_bucket* bucket)
 void hm_set(hm* map, const char* key, uint8_t* value, size_t size)
 {
     hash_t hash = hm_hash_terminated(key);
+
+    // avoid memory leak.
+    if (map->buckets[hash] != NULL) {
+        hm_bucket* buck40 = map->buckets[hash];
+
+        buck40->hash = hash;
+        buck40->value.bytes = value;
+        buck40->value.size = size;
+
+        return;
+    }
+
     map->buckets[hash] = (hm_bucket*)malloc(sizeof(hm_bucket));
 
     if (!map->buckets[hash]) {
