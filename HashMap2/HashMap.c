@@ -67,6 +67,47 @@ void hm_destroy(hm* hm)
     hm->count = 0;
 }
 
+// fill empty values
+void hm_fill(hm* map, uint8_t* value, size_t size)
+{
+    size_t s = 0;
+    while (s != HM_SIZE) {
+        hm_bucket* bucket = map->buckets[s];
+        if (!bucket) {
+            bucket = (hm_bucket*)malloc(sizeof(hm_bucket));
+            if (!bucket) {
+                printf("failed to allocate bucket at index [%llu]", s);
+                continue;
+            }
+            // hash cannot be set, it would not match where it actually lives.
+            bucket->hash = HM_FILL_DEFAULT;
+            bucket->value.bytes = value;
+            bucket->value.size = size;
+        }
+        ++s;
+    }
+
+}
+
+void hm_initialize_then_fill(hm* map, uint8_t* value, size_t size)
+{
+    hm_initialize(map);
+    hm_fill(map, value, size);
+}
+
+boolean hm_try_find(hm* map, const char* key, hm_bucket* bucket)
+{
+    if (!hm_contains(map, key)) {
+        return False;
+    }
+
+    if (bucket) {
+        bucket = hm_find(map, key);
+    }
+
+    return True;
+}
+
 void hm_set(hm* map, const char* key, uint8_t* value, size_t size)
 {
     hash_t hash = hm_hash_terminated(key);

@@ -2,26 +2,17 @@
 
 #include <stdio.h>
 
+#include <time.h>
+
 int main(int argc, char* argv[])
 {
     hm dict;
     hm_initialize(&dict);
 
-    hm_set(&dict, "some key", "some value", 11);
-    hm_set(&dict, "argc", argc, sizeof(int));
-    hm_bucket* bucket = hm_find(&dict, "some key");
-
-    if (!bucket) {
-        printf("failed to find bucket..");
-        return -1;
-    }
-
-    printf("value: %s\n", bucket->value.bytes);
-    bucket = hm_find(&dict, "argc");
-
-    printf("argc: %i\n", (int)bucket->value.bytes);
+    char val[] = "default value for pairs";
+    hm_fill(&dict, val, sizeof(val));
 
     hm_destroy(&dict);
 
-    return 0;
+    return 1;
 }
