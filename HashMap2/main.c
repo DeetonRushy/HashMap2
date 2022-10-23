@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
 
     if (!bucket) {
         printf("failed to find bucket..");
-        return;
+        return -1;
     }
 
     printf("value: %s\n", bucket->value.bytes);
